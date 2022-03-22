@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -14,7 +14,12 @@ export class UsersService {
         return await this.userRepo.save(user);
     }
 
-    async findOne(id: number) { return await this.userRepo.findOne(id) }
+    async findOne(id: number) {
+        if(!id) {
+            throw new ForbiddenException('Not Authorized');
+        }
+        return await this.userRepo.findOne(id)
+    }
 
     async find(email: string) { return await this.userRepo.find({ email }) }
 
